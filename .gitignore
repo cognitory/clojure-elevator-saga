@@ -1,0 +1,8 @@
+*.log
+/target
+/lib
+/resources/public/js/
+.lein-env
+.lein-repl-history
+.nrepl-port
+profiles.clj
