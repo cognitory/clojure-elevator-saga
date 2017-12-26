@@ -1,5 +1,6 @@
 (ns elevator.views
   (:require
+    [reagent.core :as r]
     [elevator.state :as state]))
 
 (defn game-view [world-state]
@@ -61,14 +62,26 @@
                (filter (fn [person]
                          (= {:elevator (elevator :index)} (person :location))))))])]))
 
+(def state 
+  (r/atom {:tick 0
+           :world-states (vec (state/run {:floor-count 2
+                                          :elevator-count 3
+                                          :ticks 4
+                                          :people-generator (fn [_] 
+                                                              [{:floor 1
+                                                                :target-floor 0}])
+                                          :elevator-logic (fn [_] {0 :up})}))}))
+
 (defn app-view []
-  [game-view
-   (-> (state/run {:floor-count 2
-                   :elevator-count 3
-                   :ticks 4
-                   :people-generator (fn [_] 
-                                       [{:floor 1
-                                         :target-floor 0}])
-                   :elevator-logic (fn [_] {0 :up})})
-       last)])
+  [:div
+   [game-view
+    (get-in @state [:world-states (@state :tick)])]
+   [:div
+    [:input {:type "range"
+             :min 0
+             :max (dec (count (@state :world-states)))
+             :value (@state :tick)
+             :on-change (fn [e]
+                          (swap! state assoc :tick (js/parseInt (.. e -target -value) 10)))}]
+    (@state :tick)]])
 
