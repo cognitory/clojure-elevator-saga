@@ -67,10 +67,12 @@
            :world-states (vec (state/run {:floor-count 2
                                           :elevator-count 3
                                           :ticks 4
-                                          :people-generator (fn [_] 
-                                                              [{:floor 1
-                                                                :target-floor 0}])
-                                          :elevator-logic (fn [_] {0 :up})}))}))
+                                          :ticks 20
+                                          :people-generator state/standard-people-generator
+                                          :elevator-logic (fn [_] 
+                                                            {0 (rand-nth [:up :down :open])
+                                                             1 (rand-nth [:up :down :open])
+                                                             2 (rand-nth [:up :down :open])})}))}))
 
 (defn app-view []
   [:div
