@@ -33,8 +33,10 @@
             (vec (for [person people]
                    (if-let [elevator (->> (world-state :elevators)
                                           (filter (fn [elevator] 
-                                                    (= (elevator :floor)
-                                                       (-> person :location :floor))))
+                                                    (and 
+                                                      (elevator :open?)
+                                                      (= (elevator :floor)
+                                                         (-> person :location :floor)))))
                                           first)]
                      (assoc person :location
                        {:elevator (elevator :index)})
