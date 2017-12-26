@@ -23,6 +23,8 @@
                   0)
         floor-y (fn [floor]
                   (- total-height (* floor-height (inc floor))))
+        floor-color (fn [floor]
+                      (str "hsl(" (* 360 (/ floor (world-state :floor-count))) ",80%,50%)"))
         index-in-location (fn [person-index location]
                             (->> (world-state :people)
                                  (map-indexed vector)
@@ -51,7 +53,7 @@
          [:rect.destination-area
           {:width destination-area-width
            :height floor-height
-           :fill "#666"
+           :fill (floor-color floor-index)
            :x (- total-width destination-area-width)}]])]
 
      [:g.elevators
@@ -90,7 +92,7 @@
             [:g 
              {:style {:transition "transform 1s ease-in-out"
                       :transform (str "translate(" x "px ," y "px)")}
-              :fill "yellow"
+              :fill (floor-color (person :target-floor))
               :stroke "black"
               :stroke-width "1px"}
              [person-view index]])) 
