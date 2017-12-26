@@ -88,9 +88,9 @@
 
 (defn- tick [world-state]
   (-> world-state
+      move-elevators
       move-people-out-of-elevators
       move-people-into-elevators
-      move-elevators
       increment-time
       add-people))
 

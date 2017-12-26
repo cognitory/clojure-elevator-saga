@@ -129,10 +129,12 @@
                            :open? true}]}
              (-> (state/run {:floor-count 2
                              :elevator-count 1
-                             :ticks 5
+                             :ticks 4
                              :people-generator (result-queue
                                                  [[{:floor 0
                                                     :target-floor 1}]])
                              :elevator-logic (result-queue
-                                               [{0 :open} {0 :up}])})
+                                               [{0 :open} 
+                                                {0 :open}
+                                                {0 :up}])})
                  last))))
