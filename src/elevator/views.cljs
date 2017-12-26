@@ -63,11 +63,12 @@
 
 (defn app-view []
   [game-view
-   (state/run {:floor-count 2
-               :elevator-count 3
-               :ticks 4
-               :people-generator (fn [_] 
-                                   [{:floor 1
-                                     :target-floor 0}])
-               :elevator-logic (fn [_] {0 :up})})])
+   (-> (state/run {:floor-count 2
+                   :elevator-count 3
+                   :ticks 4
+                   :people-generator (fn [_] 
+                                       [{:floor 1
+                                         :target-floor 0}])
+                   :elevator-logic (fn [_] {0 :up})})
+       last)])
 

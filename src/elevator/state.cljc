@@ -77,8 +77,9 @@
       add-people))
 
 (defn run [options]
-  (-> (reduce (fn [world-state _]
-                (tick world-state)) 
-              (initialize options) 
-              (range (options :ticks)))
-      to-player-state))
+  (->> (reduce (fn [world-states _]
+                 (conj world-states (tick (last world-states)))) 
+               [(initialize options)] 
+               (range (options :ticks)))
+       (map to-player-state)))
+
