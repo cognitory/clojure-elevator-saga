@@ -105,6 +105,6 @@
   (when (< (rand) 0.5)
     (if (< (rand) 0.5)
       [{:floor 0 
-        :target-floor (rand-nth (range 1 (dec floor-count)))}]
-      [{:floor (rand-nth (range 1 (dec floor-count)))
+        :target-floor (rand-nth (range 1 floor-count))}]
+      [{:floor (rand-nth (range 1 floor-count))
         :target-floor 0}])))
