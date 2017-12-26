@@ -20,6 +20,14 @@
                          (state/inc-tick!))} 
     ">"]
 
+   (if @state/playing?
+     [:button {:on-click (fn [_]
+                           (state/stop!))}
+      "Stop"]
+     [:button {:on-click (fn [_]
+                           (state/play!))}
+      "Play"])
+
    @state/tick])
 
 (defn debug-view [world-state]

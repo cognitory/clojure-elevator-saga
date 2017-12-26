@@ -5,7 +5,8 @@
     [elevator.engine.core :as engine]))
 
 (defonce state 
-  (r/atom {:tick 0
+  (r/atom {:playing-interval nil 
+           :tick 0
            :world-states []}))
 
 ; reactions
@@ -29,6 +30,11 @@
   (ratom/make-reaction
     (fn []
       (get @world-states @tick))))
+
+(def playing?
+  (ratom/make-reaction
+    (fn []
+      (boolean (@state :playing-interval)))))
 
 ; transactions
 
@@ -55,3 +61,16 @@
 (defn inc-tick! []
   (when (< @tick (dec @world-states-count))
     (swap! state update :tick inc)))
+
+(defn stop! []
+  (js/clearInterval (@state :playing-interval))
+  (swap! state assoc :playing-interval nil))
+
+(defn play! []
+  (inc-tick!)
+  (swap! state assoc :playing-interval 
+         (js/setInterval (fn []
+                           (if (= @tick (dec @world-states-count))
+                             (stop!)
+                             (inc-tick!)))
+                         1000)))
