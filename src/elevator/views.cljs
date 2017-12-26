@@ -8,11 +8,11 @@
         waiting-area-width 100
         elevator-width 35
         elevator-gap 5
-        total-height (* floor-height (- (world-state :floor-count) 1))] 
-    [:svg
+        total-height (* floor-height (world-state :floor-count))] 
+    [:svg {:height total-height}
      (for [floor-index (range (world-state :floor-count))]
        ^{:key floor-index}
-       [:g {:transform (str "translate(" 0 "," (- total-height (* floor-height floor-index)) ")")}
+       [:g {:transform (str "translate(" 0 "," (- total-height (* floor-height (inc floor-index))) ")")}
         [:rect.floor 
          {:width (+ waiting-area-width (* (count (world-state :elevators)) (+ elevator-width elevator-gap))) 
           :height floor-height 
@@ -41,7 +41,7 @@
        ^{:key (elevator :index)}
        [:g {:style {:transition "transform 1s ease-in-out"
                     :transform (str "translate(" (+ waiting-area-width (* (elevator :index) (+ elevator-width elevator-gap))) "px ,"
-                                    (- total-height (* floor-height (elevator :floor))) "px)")}}
+                                    (- total-height (* floor-height (inc (elevator :floor)))) "px)")}}
         [:rect.elevator 
          {:width elevator-width 
           :height floor-height 
