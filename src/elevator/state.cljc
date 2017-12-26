@@ -50,14 +50,20 @@
                     command (get commands (elevator :index))]
                 (case command
                   :up
-                  (-> elevator
-                      (assoc :open? false)
-                      (update :floor inc))
+                  (if (< (elevator :floor) (dec (world-state :floor-count)))
+                    (-> elevator
+                        (assoc :open? false)
+                        (update :floor inc))
+                    (-> elevator
+                        (assoc :open? true)))
 
                   :down
-                  (-> elevator
-                      (assoc :open? false)
-                      (update :floor dec))
+                  (if (> (elevator :floor) 0)
+                    (-> elevator
+                        (assoc :open? false)
+                        (update :floor dec))
+                    (-> elevator
+                        (assoc :open? true)))
 
                   ; :open & default
                   (-> elevator

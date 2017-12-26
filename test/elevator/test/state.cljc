@@ -87,4 +87,20 @@
                          :people-generator (fn [_])
                          :elevator-logic (fn [_] 
                                            {0 :up
-                                            1 :open})}))))
+                                            1 :open})})))
+
+  (testing "Elevators don't move past max or minimum floor"
+    (is-sub= {:people []
+              :elevators [{:index 0
+                           :floor 0
+                           :open? true}
+                          {:index 1
+                           :floor 0
+                           :open? true}]}
+             (state/run {:floor-count 1
+                         :elevator-count 2
+                         :ticks 1
+                         :people-generator (fn [_])
+                         :elevator-logic (fn [_]
+                                           {0 :up
+                                            1 :down})}))))
