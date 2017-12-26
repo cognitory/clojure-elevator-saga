@@ -1,5 +1,11 @@
 (ns elevator.views.world)
 
+(defn person-view [index]
+  (let [icon (if (even? index) "male" "female")]
+    [:use {:href (str "icons.svg#icon-" icon) 
+           :width "20px" 
+           :height "20px"}]))
+
 (defn world-view [world-state]
   (let [floor-height 50
         waiting-area-width 100
@@ -68,11 +74,11 @@
                                   {:x total-width
                                    :y (floor-y floor)}))]
             ^{:key index}
-            [:circle
+            [:g 
              {:style {:transition "transform 1s ease-in-out"
                       :transform (str "translate(" x "px ," y "px)")}
-              :r 10
               :fill "yellow"
               :stroke "black"
-              :stroke-width "1px"}])) 
+              :stroke-width "1px"}
+             [person-view index]])) 
         (world-state :people))]]))
