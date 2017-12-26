@@ -36,9 +36,15 @@
 
    (@state :tick)])
 
+(defn debug-view [world-state]
+  [:pre
+   (with-out-str
+     (cljs.pprint/pprint world-state))])
+
 (defn app-view []
-  [:div
-   [world-view
-    (get-in @state [:world-states (@state :tick)])]
-   [slider-view]])
+  (let [world-state (get-in @state [:world-states (@state :tick)])]
+    [:div
+     [world-view world-state]
+     [slider-view]
+     [debug-view world-state]]))
 
