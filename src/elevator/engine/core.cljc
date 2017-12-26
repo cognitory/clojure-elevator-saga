@@ -1,4 +1,4 @@
-(ns elevator.state)
+(ns elevator.engine.core)
 
 (defn- initialize [{:keys [floor-count elevator-count people-generator
                            elevator-logic]}]

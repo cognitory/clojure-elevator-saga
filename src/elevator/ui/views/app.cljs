@@ -1,19 +1,19 @@
 (ns elevator.ui.views.app
   (:require
     [reagent.core :as r]
-    [elevator.state :as state]
+    [elevator.engine.core :as engine]
     [elevator.ui.views.world :refer [world-view]]))
 
 (def state 
   (r/atom {:tick 0
-           :world-states (vec (state/run {:floor-count 5
-                                          :elevator-count 3
-                                          :ticks 190
-                                          :people-generator state/standard-people-generator
-                                          :elevator-logic (fn [_] 
-                                                            {0 (rand-nth [:up :down :open])
-                                                             1 (rand-nth [:up :down :open])
-                                                             2 (rand-nth [:up :down :open])})}))}))
+           :world-states (vec (engine/run {:floor-count 5
+                                           :elevator-count 3
+                                           :ticks 190
+                                           :people-generator engine/standard-people-generator
+                                           :elevator-logic (fn [_] 
+                                                             {0 (rand-nth [:up :down :open])
+                                                              1 (rand-nth [:up :down :open])
+                                                              2 (rand-nth [:up :down :open])})}))}))
 
 (defn slider-view []
   [:div
