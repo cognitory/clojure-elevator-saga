@@ -1,7 +1,7 @@
-(ns elevator.core
+(ns elevator.ui.core
   (:require
     [reagent.core :as r]
-    [elevator.views.app :refer [app-view]]))
+    [elevator.ui.views.app :refer [app-view]]))
 
 (enable-console-print!)
 
@@ -14,6 +14,3 @@
 
 (defn ^:export reload []
   (render))
-
-
-

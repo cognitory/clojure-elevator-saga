@@ -1,4 +1,4 @@
-(ns elevator.views.world)
+(ns elevator.ui.views.world)
 
 (defn person-view [index]
   (let [icon (if (even? index) "male" "female")]

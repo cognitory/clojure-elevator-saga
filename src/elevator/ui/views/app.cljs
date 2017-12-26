@@ -1,8 +1,8 @@
-(ns elevator.views.app
+(ns elevator.ui.views.app
   (:require
     [reagent.core :as r]
     [elevator.state :as state]
-    [elevator.views.world :refer [world-view]]))
+    [elevator.ui.views.world :refer [world-view]]))
 
 (def state 
   (r/atom {:tick 0

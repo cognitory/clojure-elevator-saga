@@ -9,9 +9,9 @@
   :figwheel {:server-port 6124}
 
   :cljsbuild {:builds [{:id "dev"
-                        :source-paths ["src" "test"]
-                        :figwheel {:on-jsload "elevator.core/reload"}
-                        :compiler {:main "elevator.core"
+                        :source-paths ["src"]
+                        :figwheel {:on-jsload "elevator.ui.core/reload"}
+                        :compiler {:main "elevator.ui.core"
                                    :asset-path "/js/out"
                                    :output-to "resources/public/js/elevator.js"
                                    :output-dir "resources/public/js/out"}}]})
