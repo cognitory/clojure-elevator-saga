@@ -19,24 +19,28 @@
             :floor-count 2
             :time 1
             :elevators [{:index 0
-                         :floor 0}
+                         :floor 0
+                         :open? true}
                         {:index 1
-                         :floor 0}]}
-           (-> (state/run {:floor-count 2
-                           :elevator-count 2
-                           :ticks 1
-                           :people-generator (fn [_])})))))
+                         :floor 0
+                         :open? true}]}
+           (state/run {:floor-count 2
+                       :elevator-count 2
+                       :ticks 1
+                       :people-generator (fn [_])
+                       :elevator-logic (fn [_] {})}))))
 
   (testing "Tick uses generator to generate people"
     (is-sub= {:people [{:location {:floor 1}
                         :target-floor 0
                         :start-time 1}]}
-             (-> (state/run {:floor-count 2
-                             :elevator-count 2
-                             :ticks 1
-                             :people-generator (meta-people-generator
-                                                 [[{:floor 1
-                                                    :target-floor 0}]])})))
+             (state/run {:floor-count 2
+                         :elevator-count 2
+                         :ticks 1
+                         :people-generator (meta-people-generator
+                                             [[{:floor 1
+                                                :target-floor 0}]])
+                         :elevator-logic (fn [_] {})}))
 
     (is-sub= {:people [{:location {:floor 1} 
                         :target-floor 0
@@ -44,24 +48,43 @@
                        {:location {:floor 1}
                         :target-floor 0
                         :start-time 2}]}
-             (-> (state/run {:floor-count 2
-                             :elevator-count 2
-                             :ticks 2
-                             :people-generator (meta-people-generator
-                                                 [[{:floor 1
-                                                    :target-floor 0}]
-                                                  [{:floor 1
-                                                    :target-floor 0}]])}))))
+             (state/run {:floor-count 2
+                         :elevator-count 2
+                         :ticks 2
+                         :people-generator (meta-people-generator
+                                             [[{:floor 1
+                                                :target-floor 0}]
+                                              [{:floor 1
+                                                :target-floor 0}]])
+                         :elevator-logic (fn [_] {})})))
 
   (testing "Person on same floor as elevator assigned to elevator in next tick"
     (is-sub= {:people [{:location {:elevator 0} 
                         :target-floor 1
                         :start-time 1}]
               :elevators [{:index 0
-                           :floor 0}]}
-             (-> (state/run {:floor-count 2
-                             :elevator-count 1
-                             :ticks 2
-                             :people-generator (meta-people-generator
-                                                 [[{:floor 0
-                                                    :target-floor 1}]])})))))
+                           :floor 0
+                           :open? true}]}
+             (state/run {:floor-count 2
+                         :elevator-count 1
+                         :ticks 2
+                         :people-generator (meta-people-generator
+                                             [[{:floor 0
+                                                :target-floor 1}]])
+                         :elevator-logic (fn [_] {})})))
+  
+  (testing "Elevators move according to commands"
+    (is-sub= {:people []
+              :elevators [{:index 0
+                           :floor 1
+                           :open? false}
+                          {:index 1
+                           :floor 0
+                           :open? true}]}
+             (state/run {:floor-count 2
+                         :elevator-count 2
+                         :ticks 1
+                         :people-generator (fn [_])
+                         :elevator-logic (fn [_] 
+                                           {0 :up
+                                            1 :open})}))))
