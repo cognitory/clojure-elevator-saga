@@ -1,7 +1,13 @@
 (ns elevator.ui.views.world)
 
 (defn person-view [index]
-  (let [icon (if (even? index) "male" "female")]
+  (let [icon (cond 
+               (= 0 (mod index 5)) 
+               "child"
+               (even? index) 
+               "male" 
+               :else
+               "female")]
     [:use {:href (str "icons.svg#icon-" icon) 
            :width "15px" 
            :height "20px"}]))
