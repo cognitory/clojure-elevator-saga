@@ -13,11 +13,11 @@
                          (state/set-tick! (js/parseInt (.. e -target -value) 10)))}]
 
    [:button {:on-click (fn [_]
-                         (state/inc-tick!))} 
+                         (state/dec-tick!))} 
     "<"]
 
    [:button {:on-click (fn [_]
-                         (state/dec-tick!))} 
+                         (state/inc-tick!))} 
     ">"]
 
    @state/tick])

@@ -48,10 +48,10 @@
 (defn set-tick! [tick]
   (swap! state assoc :tick tick))
 
-(defn inc-tick! []
+(defn dec-tick! []
   (when (> @tick 0)
     (swap! state update :tick dec)))
 
-(defn dec-tick! []
+(defn inc-tick! []
   (when (< @tick (dec @world-states-count))
     (swap! state update :tick inc)))
