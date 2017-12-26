@@ -6,9 +6,9 @@
 (defmacro is-sub= [expected actual]
   (list 'is (list '= expected (list 'select-keys actual (list 'keys expected)) )))
 
-(defn meta-people-generator [queue]
+(defn result-queue [queue]
   (let [queue (atom queue)]
-    (fn [floor-count]
+    (fn [_]
       (let [result (first @queue)]
         (swap! queue rest)
         result))))
@@ -46,7 +46,7 @@
              (-> (state/run {:floor-count 2
                              :elevator-count 2
                              :ticks 1
-                             :people-generator (meta-people-generator
+                             :people-generator (result-queue
                                                  [[{:floor 1
                                                     :target-floor 0}]])
                              :elevator-logic (fn [_] {})})
@@ -61,7 +61,7 @@
              (-> (state/run {:floor-count 2
                              :elevator-count 2
                              :ticks 2
-                             :people-generator (meta-people-generator
+                             :people-generator (result-queue
                                                  [[{:floor 1
                                                     :target-floor 0}]
                                                   [{:floor 1
@@ -79,7 +79,7 @@
              (-> (state/run {:floor-count 2
                              :elevator-count 1
                              :ticks 2
-                             :people-generator (meta-people-generator
+                             :people-generator (result-queue
                                                  [[{:floor 0
                                                     :target-floor 1}]])
                              :elevator-logic (fn [_] {})})
@@ -117,4 +117,22 @@
                              :elevator-logic (fn [_]
                                                {0 :up
                                                 1 :down})})
+                 last)))
+
+  (testing "People get off elevator when it is at target floor"
+    (is-sub= {:people [{:location {:destination 1}
+                        :target-floor 1
+                        :start-time 1
+                        :end-time 4}]
+              :elevators [{:index 0
+                           :floor 1
+                           :open? true}]}
+             (-> (state/run {:floor-count 2
+                             :elevator-count 1
+                             :ticks 5
+                             :people-generator (result-queue
+                                                 [[{:floor 0
+                                                    :target-floor 1}]])
+                             :elevator-logic (result-queue
+                                               [{0 :open} {0 :up}])})
                  last))))
