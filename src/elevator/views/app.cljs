@@ -1,4 +1,4 @@
-(ns elevator.views
+(ns elevator.views.app
   (:require
     [reagent.core :as r]
     [elevator.state :as state]
@@ -8,7 +8,7 @@
   (r/atom {:tick 0
            :world-states (vec (state/run {:floor-count 5
                                           :elevator-count 3
-                                          :ticks 20
+                                          :ticks 190
                                           :people-generator state/standard-people-generator
                                           :elevator-logic (fn [_] 
                                                             {0 (rand-nth [:up :down :open])
