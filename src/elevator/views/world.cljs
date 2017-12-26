@@ -3,11 +3,12 @@
 (defn person-view [index]
   (let [icon (if (even? index) "male" "female")]
     [:use {:href (str "icons.svg#icon-" icon) 
-           :width "20px" 
+           :width "15px" 
            :height "20px"}]))
 
 (defn world-view [world-state]
   (let [floor-height 50
+        person-width 15
         waiting-area-width 100
         destination-area-width 100
         elevator-width 35
@@ -21,7 +22,15 @@
         floor-x (fn [floor]
                   0)
         floor-y (fn [floor]
-                  (- total-height (* floor-height (inc floor))))] 
+                  (- total-height (* floor-height (inc floor))))
+        index-in-location (fn [person-index location]
+                            (->> (world-state :people)
+                                 (map-indexed vector)
+                                 (filter (fn [[i person]]
+                                           (= (person :location) location)))
+                                 (take-while (fn [[i _]]
+                                               (not= i person-index)))
+                                 count))] 
 
     [:svg {:height total-height :width total-width}
 
@@ -62,13 +71,17 @@
         (fn [index person]
           (let [{:keys [x y]} (case (first (keys (person :location)))
                                 :elevator
-                                (let [elevator (get-in world-state [:elevators (-> person :location :elevator)])]
-                                  {:x (elevator-x elevator)  
+                                (let [elevator (get-in world-state [:elevators (-> person :location :elevator)])
+                                      position-in-elevator (index-in-location index {:elevator (elevator :index)})]
+                                  {:x (+ (elevator-x elevator) (* person-width position-in-elevator))  
                                    :y (elevator-y elevator)})
+
                                 :floor
-                                (let [floor (-> person :location :floor)]
-                                  {:x (floor-x floor)
+                                (let [floor (-> person :location :floor)
+                                      position-in-floor (index-in-location index {:floor floor})]
+                                  {:x (+ (floor-x floor) (* person-width position-in-floor))
                                    :y (floor-y floor)})
+
                                 :destination
                                 (let [floor (-> person :location :destination)]
                                   {:x total-width
