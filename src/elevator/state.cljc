@@ -19,12 +19,10 @@
 (defn- add-people [world-state]
   (let [partial-people ((world-state :people-generator))]
     (-> world-state
-        (update :people concat (map
-                                 (fn [partial-person]
-                                   {:location {:floor (partial-person :floor)} 
-                                    :target-floor (partial-person :target-floor)
-                                    :start-time (world-state :time)})
-                                 partial-people)))))
+        (update :people concat (for [partial-person partial-people]
+                                 {:location {:floor (partial-person :floor)} 
+                                  :target-floor (partial-person :target-floor)
+                                  :start-time (world-state :time)})))))
 
 (defn- increment-time [world-state]
   (update world-state :time inc))
