@@ -42,7 +42,7 @@
         [:rect.elevator 
          {:width elevator-width 
           :height floor-height 
-          :fill "black" 
+          :fill (if (elevator :open?) "black" "gray") 
           :stroke "black" 
           :stroke-width "2px"}]
         (map-indexed 
