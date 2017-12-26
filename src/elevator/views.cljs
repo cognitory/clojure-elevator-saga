@@ -26,5 +26,16 @@
              :value (@state :tick)
              :on-change (fn [e]
                           (swap! state assoc :tick (js/parseInt (.. e -target -value) 10)))}]
+
+    [:button {:on-click (fn [_]
+                          (when (> (@state :tick) 0)
+                            (swap! state update :tick dec)))} 
+     "<"]
+
+    [:button {:on-click (fn [_]
+                          (when (< (@state :tick) (dec (count (@state :world-states))))
+                            (swap! state update :tick inc)))} 
+     ">"]
+
     (@state :tick)]])
 
