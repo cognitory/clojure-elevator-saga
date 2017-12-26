@@ -9,6 +9,7 @@
 (defn world-view [world-state]
   (let [floor-height 50
         person-width 15
+        person-height 20
         waiting-area-width 100
         destination-area-width 100
         elevator-width 35
@@ -91,7 +92,7 @@
             ^{:key index}
             [:g 
              {:style {:transition "transform 1s ease-in-out"
-                      :transform (str "translate(" x "px ," y "px)")}
+                      :transform (str "translate(" x "px ," (+ (- floor-height person-height) y) "px)")}
               :fill (floor-color (person :target-floor))
               :stroke "black"
               :stroke-width "1px"}
