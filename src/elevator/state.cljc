@@ -4,8 +4,9 @@
   {:time 0
    :people []
    :floor-count floor-count
-   :elevators (repeat elevator-count 
-                      {:location [:floor 0]})
+   :elevators (for [index (range elevator-count)] 
+                {:index index
+                 :floor 0})
    :people-generator (partial people-generator floor-count)})
 
 (defn- to-player-state [world-state]
@@ -17,7 +18,7 @@
     (-> world-state
         (update :people concat (map
                                  (fn [partial-person]
-                                   {:location [:floor (partial-person :floor)]
+                                   {:location {:floor (partial-person :floor)} 
                                     :target-floor (partial-person :target-floor)
                                     :start-time (world-state :time)})
                                  partial-people)))))
@@ -25,8 +26,23 @@
 (defn- increment-time [world-state]
   (update world-state :time inc))
 
+(defn- move-people-into-elevator [world-state]
+  (let [elevator-floors (set (map :floor (world-state :elevators)))]
+    (update world-state :people 
+            (fn [people]
+              (for [person people]
+                (if-let [elevator (->> (world-state :elevators)
+                                       (filter (fn [elevator] 
+                                                 (= (elevator :floor)
+                                                    (-> person :location :floor))))
+                                       first)]
+                  (assoc person :location
+                    {:elevator (elevator :index)})
+                  person))))))
+
 (defn- tick [world-state]
   (-> world-state
+      move-people-into-elevator
       increment-time
       add-people))
 

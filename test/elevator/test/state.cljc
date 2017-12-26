@@ -4,7 +4,7 @@
     [elevator.state :as state]))
 
 (defmacro is-sub= [expected actual]
-  (list 'is (list '= (list 'select-keys expected (list 'keys actual)) actual)))
+  (list 'is (list '= expected (list 'select-keys actual (list 'keys expected)) )))
 
 (defn meta-people-generator [queue]
   (let [queue (atom queue)]
@@ -15,39 +15,53 @@
 
 (deftest tick
   (testing "Initialize with no people"
-    (is (= (-> (state/run {:floor-count 2
-                           :elevator-count 2
-                           :ticks 1
-                           :people-generator (fn [_])}))
-           {:people []
+    (is (= {:people []
             :floor-count 2
             :time 1
-            :elevators [{:location [:floor 0]}
-                        {:location [:floor 0]}]})))
+            :elevators [{:index 0
+                         :floor 0}
+                        {:index 1
+                         :floor 0}]}
+           (-> (state/run {:floor-count 2
+                           :elevator-count 2
+                           :ticks 1
+                           :people-generator (fn [_])})))))
 
   (testing "Tick uses generator to generate people"
-    (is-sub= (-> (state/run {:floor-count 2
+    (is-sub= {:people [{:location {:floor 1}
+                        :target-floor 0
+                        :start-time 1}]}
+             (-> (state/run {:floor-count 2
                              :elevator-count 2
                              :ticks 1
                              :people-generator (meta-people-generator
-                                                 [[{:floor 0
-                                                    :target-floor 1}]])}))
-             {:people [{:location [:floor 0]
-                        :target-floor 1
-                        :start-time 1}]})
+                                                 [[{:floor 1
+                                                    :target-floor 0}]])})))
 
-
-    (is-sub= (-> (state/run {:floor-count 2
+    (is-sub= {:people [{:location {:floor 1} 
+                        :target-floor 0
+                        :start-time 1}
+                       {:location {:floor 1}
+                        :target-floor 0
+                        :start-time 2}]}
+             (-> (state/run {:floor-count 2
                              :elevator-count 2
                              :ticks 2
                              :people-generator (meta-people-generator
-                                                 [[{:floor 0
-                                                    :target-floor 1}]
+                                                 [[{:floor 1
+                                                    :target-floor 0}]
                                                   [{:floor 1
-                                                    :target-floor 0}]])}))
-             {:people [{:location [:floor 0]
+                                                    :target-floor 0}]])}))))
+
+  (testing "Person on same floor as elevator assigned to elevator in next tick"
+    (is-sub= {:people [{:location {:elevator 0} 
                         :target-floor 1
-                        :start-time 1}
-                       {:location [:floor 1]
-                        :target-floor 0
-                        :start-time 2}]})))
+                        :start-time 1}]
+              :elevators [{:index 0
+                           :floor 0}]}
+             (-> (state/run {:floor-count 2
+                             :elevator-count 1
+                             :ticks 2
+                             :people-generator (meta-people-generator
+                                                 [[{:floor 0
+                                                    :target-floor 1}]])})))))
