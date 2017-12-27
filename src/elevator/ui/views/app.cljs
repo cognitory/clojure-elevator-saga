@@ -41,7 +41,7 @@
      [world-view world-state]
      
      [slider-view]
-     [debug-view world-state]
      [:button {:on-click (fn [_]
                            (state/eval!))}
-      "Eval"]]))
+      "Eval"]
+     [debug-view world-state]]))
