@@ -32,17 +32,25 @@
 (defn- move-people-into-elevators [world-state]
   (update world-state :people 
           (fn [people]
-            (vec (for [person people]
-                   (if-let [elevator (->> (world-state :elevators)
-                                          (filter (fn [elevator] 
-                                                    (and 
-                                                      (elevator :open?)
-                                                      (= (elevator :floor)
-                                                         (-> person :location :floor)))))
-                                          first)]
-                     (assoc person :location
-                       {:elevator (elevator :index)})
-                     person))))))
+            (reduce (fn [people person]
+                      (if-let [elevator (->> (world-state :elevators)
+                                             (filter (fn [elevator] 
+                                                       (and 
+                                                         (elevator :open?)
+                                                         (= (elevator :floor)
+                                                            (-> person :location :floor))
+                                                         (< (->> people
+                                                                 (filter (fn [person]
+                                                                           (= {:elevator (elevator :index)} 
+                                                                              (person :location))))
+                                                                 count)
+                                                            (elevator :capacity)))))
+                                             first)]
+                        (conj people (assoc person :location
+                                       {:elevator (elevator :index)}))
+                        (conj people person)))
+                    []
+                    people))))
 
 (defn- move-people-out-of-elevators [world-state]
   (update world-state :people

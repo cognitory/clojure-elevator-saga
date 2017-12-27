@@ -152,4 +152,27 @@
                                                 [{0 :open} 
                                                  {0 :open}
                                                  {0 :up}])})
+                 last)))
+  
+  (testing "People only enter if there is still room"
+    (is-sub= {:people [{:location {:elevator 0}
+                        :target-floor 1
+                        :start-time 1}
+                       {:location {:floor 0}
+                        :target-floor 1
+                        :start-time 1}]
+              :elevators [{:index 0
+                           :floor 0
+                           :capacity 1
+                           :open? true}]}
+             (-> (engine/run {:floor-count 2
+                              :elevators [{:capacity 1}]
+                              :ticks 2
+                              :people-generator (result-queue
+                                                  [[{:floor 0
+                                                     :target-floor 1}
+                                                    {:floor 0
+                                                     :target-floor 1}]])
+                              :elevator-logic (fn [_]
+                                                {0 :open})})
                  last))))
