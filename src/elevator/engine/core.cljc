@@ -1,14 +1,16 @@
 (ns elevator.engine.core)
 
-(defn- initialize [{:keys [floor-count elevator-count people-generator
+(defn- initialize [{:keys [floor-count elevators people-generator
                            elevator-logic]}]
   {:time 0
    :people []
    :floor-count floor-count
-   :elevators (vec (for [index (range elevator-count)] 
-                     {:index index
-                      :floor 0
-                      :open? true}))
+   :elevators (vec (map-indexed (fn [index elevator] 
+                                  {:index index
+                                   :capacity (elevator :capacity)
+                                   :floor 0
+                                   :open? true})
+                                elevators))
    :people-generator (partial people-generator floor-count)
    :elevator-logic elevator-logic})
 

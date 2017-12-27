@@ -20,21 +20,26 @@
              :time 0
              :elevators [{:index 0
                           :floor 0
+                          :capacity 1
                           :open? true}
                          {:index 1
                           :floor 0
+                          :capacity 1
                           :open? true}]}
             {:people []
              :floor-count 2
              :time 1
              :elevators [{:index 0
                           :floor 0
+                          :capacity 1
                           :open? true}
                          {:index 1
                           :floor 0
+                          :capacity 1
                           :open? true}]}]
            (engine/run {:floor-count 2
-                        :elevator-count 2
+                        :elevators [{:capacity 1}
+                                    {:capacity 1}]
                         :ticks 1
                         :people-generator (fn [_])
                         :elevator-logic (fn [_] {})}))))
@@ -44,7 +49,8 @@
                         :target-floor 0
                         :start-time 1}]}
              (-> (engine/run {:floor-count 2
-                              :elevator-count 2
+                              :elevators [{:capacity 1}
+                                          {:capacity 1}]
                               :ticks 1
                               :people-generator (result-queue
                                                   [[{:floor 1
@@ -59,7 +65,8 @@
                         :target-floor 0
                         :start-time 2}]}
              (-> (engine/run {:floor-count 2
-                              :elevator-count 2
+                              :elevators [{:capacity 1}
+                                          {:capacity 1}]
                               :ticks 2
                               :people-generator (result-queue
                                                   [[{:floor 1
@@ -75,9 +82,10 @@
                         :start-time 1}]
               :elevators [{:index 0
                            :floor 0
+                           :capacity 1
                            :open? true}]}
              (-> (engine/run {:floor-count 2
-                              :elevator-count 1
+                              :elevators [{:capacity 1}]
                               :ticks 2
                               :people-generator (result-queue
                                                   [[{:floor 0
@@ -89,12 +97,15 @@
     (is-sub= {:people []
               :elevators [{:index 0
                            :floor 1
+                           :capacity 1
                            :open? false}
                           {:index 1
                            :floor 0
+                           :capacity 1
                            :open? true}]}
              (-> (engine/run {:floor-count 2
-                              :elevator-count 2
+                              :elevators [{:capacity 1}
+                                          {:capacity 1}]
                               :ticks 1
                               :people-generator (fn [_])
                               :elevator-logic (fn [_] 
@@ -106,12 +117,15 @@
     (is-sub= {:people []
               :elevators [{:index 0
                            :floor 0
+                           :capacity 1
                            :open? true}
                           {:index 1
                            :floor 0
+                           :capacity 1
                            :open? true}]}
              (-> (engine/run {:floor-count 1
-                              :elevator-count 2
+                              :elevators [{:capacity 1}
+                                          {:capacity 1}]
                               :ticks 1
                               :people-generator (fn [_])
                               :elevator-logic (fn [_]
@@ -126,9 +140,10 @@
                         :end-time 4}]
               :elevators [{:index 0
                            :floor 1
+                           :capacity 1
                            :open? true}]}
              (-> (engine/run {:floor-count 2
-                              :elevator-count 1
+                              :elevators [{:capacity 1}]
                               :ticks 4
                               :people-generator (result-queue
                                                   [[{:floor 0

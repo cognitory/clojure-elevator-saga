@@ -44,7 +44,7 @@
          :tick 0
          :world-states
          (vec (engine/run {:floor-count 5
-                           :elevator-count 1
+                           :elevators [{:capacity 2}]
                            :ticks 100
                            :people-generator engine/standard-people-generator
                            :elevator-logic solutions/elevator-logic}))))
