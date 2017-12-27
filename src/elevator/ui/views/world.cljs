@@ -1,10 +1,10 @@
 (ns elevator.ui.views.world)
 
-(defn person-view [index]
+(defn person-view [person]
   (let [icon (cond 
-               (= 0 (mod index 5)) 
+               (= 0 (mod (person :index) 5)) 
                "child"
-               (even? index) 
+               (even? (person :index)) 
                "male" 
                :else
                "female")]
@@ -41,11 +41,10 @@
                       (str "hsl(" (* 360 (/ floor (world-state :floor-count))) ",80%,50%)"))
         index-in-location (fn [person-index location]
                             (->> (world-state :people)
-                                 (map-indexed vector)
-                                 (filter (fn [[i person]]
+                                 (filter (fn [person]
                                            (= (person :location) location)))
-                                 (take-while (fn [[i _]]
-                                               (not= i person-index)))
+                                 (take-while (fn [person]
+                                               (not= (person :index) person-index)))
                                  count))] 
 
     [:svg {:height total-height :width total-width}
@@ -83,31 +82,30 @@
            :stroke-width "2px"}]])]
      
      [:g.people
-      (map-indexed 
-        (fn [index person]
-          (let [{:keys [x y]} (case (first (keys (person :location)))
-                                :elevator
-                                (let [elevator (get-in world-state [:elevators (-> person :location :elevator)])
-                                      position-in-elevator (index-in-location index {:elevator (elevator :index)})]
-                                  {:x (+ (elevator-x elevator) (* person-width position-in-elevator))  
-                                   :y (elevator-y elevator)})
+      (map (fn [person]
+             (let [{:keys [x y]} (case (first (keys (person :location)))
+                                   :elevator
+                                   (let [elevator (get-in world-state [:elevators (-> person :location :elevator)])
+                                         position-in-elevator (index-in-location (person :index) {:elevator (elevator :index)})]
+                                     {:x (+ (elevator-x elevator) (* person-width position-in-elevator))  
+                                      :y (elevator-y elevator)})
 
-                                :floor
-                                (let [floor (-> person :location :floor)
-                                      position-in-floor (index-in-location index {:floor floor})]
-                                  {:x (+ (floor-x floor) (* person-width position-in-floor))
-                                   :y (floor-y floor)})
+                                   :floor
+                                   (let [floor (-> person :location :floor)
+                                         position-in-floor (index-in-location (person :index) {:floor floor})]
+                                     {:x (+ (floor-x floor) (* person-width position-in-floor))
+                                      :y (floor-y floor)})
 
-                                :destination
-                                (let [floor (-> person :location :destination)]
-                                  {:x total-width
-                                   :y (floor-y floor)}))]
-            ^{:key index}
-            [:g 
-             {:style {:transition "transform 1s ease-in-out"
-                      :transform (str "translate(" x "px ," (+ (- floor-height person-height) y) "px)")}
-              :fill (floor-color (person :target-floor))
-              :stroke "black"
-              :stroke-width "1px"}
-             [person-view index]])) 
-        (world-state :people))]]))
+                                   :destination
+                                   (let [floor (-> person :location :destination)]
+                                     {:x total-width
+                                      :y (floor-y floor)}))]
+               ^{:key (person :index)}
+               [:g 
+                {:style {:transition "transform 1s ease-in-out"
+                         :transform (str "translate(" x "px ," (+ (- floor-height person-height) y) "px)")}
+                 :fill (floor-color (person :target-floor))
+                 :stroke "black"
+                 :stroke-width "1px"}
+                [person-view person]])) 
+           (world-state :people))]]))
