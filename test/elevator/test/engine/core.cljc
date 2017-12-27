@@ -45,7 +45,8 @@
                         :elevator-logic (fn [_] {})}))))
 
   (testing "Tick uses generator to generate people"
-    (is-sub= {:people [{:location {:floor 1}
+    (is-sub= {:people [{:index 0
+                        :location {:floor 1}
                         :target-floor 0
                         :start-time 1}]}
              (-> (engine/run {:floor-count 2
@@ -58,10 +59,12 @@
                               :elevator-logic (fn [_] {})})
                  last))
 
-    (is-sub= {:people [{:location {:floor 1} 
+    (is-sub= {:people [{:index 0
+                        :location {:floor 1} 
                         :target-floor 0
                         :start-time 1}
-                       {:location {:floor 1}
+                       {:index 1
+                        :location {:floor 1}
                         :target-floor 0
                         :start-time 2}]}
              (-> (engine/run {:floor-count 2
@@ -77,7 +80,8 @@
                  last)))
 
   (testing "Person on same floor as elevator assigned to elevator in next tick"
-    (is-sub= {:people [{:location {:elevator 0} 
+    (is-sub= {:people [{:index 0
+                        :location {:elevator 0} 
                         :target-floor 1
                         :start-time 1}]
               :elevators [{:index 0
@@ -134,7 +138,8 @@
                  last)))
 
   (testing "People get off elevator when it is at target floor"
-    (is-sub= {:people [{:location {:destination 1}
+    (is-sub= {:people [{:index 0
+                        :location {:destination 1}
                         :target-floor 1
                         :start-time 1
                         :end-time 4}]
@@ -155,10 +160,12 @@
                  last)))
   
   (testing "People only enter if there is still room"
-    (is-sub= {:people [{:location {:elevator 0}
+    (is-sub= {:people [{:index 0
+                        :location {:elevator 0}
                         :target-floor 1
                         :start-time 1}
-                       {:location {:floor 0}
+                       {:index 1
+                        :location {:floor 0}
                         :target-floor 1
                         :start-time 1}]
               :elevators [{:index 0

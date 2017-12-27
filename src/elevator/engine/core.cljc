@@ -21,10 +21,12 @@
 (defn- add-people [world-state]
   (let [partial-people ((world-state :people-generator))]
     (-> world-state
-        (update :people concat (vec (for [partial-person partial-people]
-                                      {:location {:floor (partial-person :floor)} 
-                                       :target-floor (partial-person :target-floor)
-                                       :start-time (world-state :time)}))))))
+        (update :people concat (vec (map-indexed (fn [index partial-person]
+                                                   {:index (+ index (count (world-state :people)))
+                                                    :location {:floor (partial-person :floor)} 
+                                                    :target-floor (partial-person :target-floor)
+                                                    :start-time (world-state :time)})
+                                                 partial-people))))))
 
 (defn- increment-time [world-state]
   (update world-state :time inc))
@@ -46,10 +48,10 @@
                                                                  count)
                                                             (elevator :capacity)))))
                                              first)]
-                        (conj people (assoc person :location
-                                       {:elevator (elevator :index)}))
-                        (conj people person)))
-                    []
+                        (assoc people (person :index) (assoc person :location
+                                                        {:elevator (elevator :index)}))
+                        (assoc people (person :index) person)))
+                    people
                     people))))
 
 (defn- move-people-out-of-elevators [world-state]
