@@ -2,7 +2,8 @@
   (:require
     [reagent.core :as r]
     [reagent.ratom :as ratom]
-    [elevator.engine.core :as engine]))
+    [elevator.engine.core :as engine]
+    [elevator.solutions :as solutions]))
 
 (defonce state 
   (r/atom {:playing-interval nil 
@@ -43,13 +44,10 @@
          :tick 0
          :world-states
          (vec (engine/run {:floor-count 5
-                           :elevator-count 3
+                           :elevator-count 1
                            :ticks 100
                            :people-generator engine/standard-people-generator
-                           :elevator-logic (fn [_] 
-                                             {0 (rand-nth [:up :down :open])
-                                              1 (rand-nth [:up :down :open])
-                                              2 (rand-nth [:up :down :open])})}))))
+                           :elevator-logic solutions/elevator-logic}))))
 
 (defn set-tick! [tick]
   (swap! state assoc :tick tick))

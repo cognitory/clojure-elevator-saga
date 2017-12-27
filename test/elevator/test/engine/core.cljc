@@ -4,7 +4,7 @@
     [elevator.engine.core :as engine]))
 
 (defmacro is-sub= [expected actual]
-  (list 'is (list '= expected (list 'select-keys actual (list 'keys expected)) )))
+  (list 'is (list '= expected (list 'select-keys actual (list 'keys expected)))))
 
 (defn result-queue [queue]
   (let [queue (atom queue)]
