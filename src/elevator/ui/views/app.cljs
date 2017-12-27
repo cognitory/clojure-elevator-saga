@@ -36,9 +36,10 @@
      (cljs.pprint/pprint world-state))])
 
 (defn app-view []
-  (let [world-state @state/current-state]
+  (let [world-state @state/current-state
+        next-world-state @state/next-state]
     [:div
-     [world-view world-state]
+     [world-view world-state next-world-state]
      
      [slider-view]
      [:button {:on-click (fn [_]

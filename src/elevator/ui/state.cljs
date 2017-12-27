@@ -32,6 +32,11 @@
     (fn []
       (get @world-states @tick))))
 
+(def next-state
+  (ratom/make-reaction
+    (fn []
+      (get @world-states (inc @tick)))))
+
 (def playing?
   (ratom/make-reaction
     (fn []

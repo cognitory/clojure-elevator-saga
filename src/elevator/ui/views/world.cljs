@@ -12,7 +12,7 @@
            :width "15px" 
            :height "20px"}]))
 
-(defn world-view [world-state]
+(defn world-view [world-state next-world-state]
   (let [floor-height 50
         person-width 15
         person-height 20
@@ -43,6 +43,7 @@
                             (->> (world-state :people)
                                  (filter (fn [person]
                                            (= (person :location) location)))
+                                 reverse
                                  (take-while (fn [person]
                                                (not= (person :index) person-index)))
                                  count))] 
@@ -90,6 +91,10 @@
                                      {:x (+ (elevator-x elevator) (* person-width position-in-elevator))  
                                       :y (elevator-y elevator)})
 
+                                   :pre-floor
+                                   {:x (- person-width)
+                                    :y (floor-y (-> person :location :pre-floor))}
+
                                    :floor
                                    (let [floor (-> person :location :floor)
                                          position-in-floor (index-in-location (person :index) {:floor floor})]
@@ -108,4 +113,10 @@
                  :stroke "black"
                  :stroke-width "1px"}
                 [person-view person]])) 
-           (world-state :people))]]))
+           (concat 
+             (world-state :people)
+             (when next-world-state
+               (->> (next-world-state :people)
+                    (drop (count (world-state :people)))
+                    (map (fn [person]
+                           (assoc person :location {:pre-floor (-> person :location :floor)})))))))]]))
