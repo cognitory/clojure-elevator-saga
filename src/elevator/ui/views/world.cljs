@@ -18,14 +18,21 @@
         person-height 20
         waiting-area-width 100
         destination-area-width 100
-        elevator-width 35
         elevator-gap 5
         total-height (* floor-height (world-state :floor-count))
-        total-width (+ waiting-area-width (* (count (world-state :elevators)) (+ elevator-width elevator-gap)) destination-area-width)
+        elevator-width (fn [elevator]
+                         (* person-width (elevator :capacity)))
+        elevator-widths-up-to-index (fn [index]
+                                      (reduce (fn [sum elevator]
+                                                (+ sum (elevator-width elevator) elevator-gap)) 
+                                              0 
+                                              (take index (world-state :elevators))))
         elevator-x (fn [elevator]
-                     (+ waiting-area-width (* (elevator :index) (+ elevator-width elevator-gap))))
+                     (+ waiting-area-width (elevator-widths-up-to-index (elevator :index))))
         elevator-y (fn [elevator]
                      (- total-height (* floor-height (inc (elevator :floor)))))
+
+        total-width (+ waiting-area-width (elevator-widths-up-to-index (count (world-state :elevators))) destination-area-width)
         floor-x (fn [floor]
                   0)
         floor-y (fn [floor]
@@ -69,7 +76,7 @@
         [:g {:style {:transition "transform 1s ease-in-out"
                      :transform (str "translate(" (elevator-x elevator) "px ," (elevator-y elevator) "px)")}}
          [:rect.elevator 
-          {:width elevator-width 
+          {:width (elevator-width elevator) 
            :height floor-height 
            :fill (if (elevator :open?) "black" "gray") 
            :stroke "black" 
