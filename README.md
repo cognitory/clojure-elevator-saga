@@ -3,3 +3,6 @@ To run web app:
 
 and go to
 `http://localhost:6124/`
+
+To run tests:
+`lein test`
