@@ -30,7 +30,8 @@
                             :down
                             (> closest-floor elevator-floor)
                             :up)]
-              [(elevator :index) command])
+              [(elevator :index) {:action command
+                                  :indicators #{:up :down}}])
             (let [request-floors (requested-floors state)
                   elevator-floor (elevator :floor)
                   closest-floor (first (sort-by (fn [f] (Math/abs (- f elevator-floor))) request-floors))
@@ -43,5 +44,6 @@
                             :down
                             (> closest-floor elevator-floor)
                             :up)]
-              [(elevator :index) command])))))
+              [(elevator :index) {:action command
+                                  :indicators #{:up :down}}])))))
 

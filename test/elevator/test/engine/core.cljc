@@ -21,10 +21,12 @@
              :elevators [{:index 0
                           :floor 0
                           :capacity 1
+                          :indicators #{:up :down}
                           :open? true}
                          {:index 1
                           :floor 0
                           :capacity 1
+                          :indicators #{:up :down}
                           :open? true}]}
             {:people []
              :floor-count 2
@@ -32,10 +34,12 @@
              :elevators [{:index 0
                           :floor 0
                           :capacity 1
+                          :indicators #{:up :down}
                           :open? true}
                          {:index 1
                           :floor 0
                           :capacity 1
+                          :indicators #{:up :down}
                           :open? true}]}]
            (engine/run {:floor-count 2
                         :elevators [{:capacity 1}
@@ -60,7 +64,7 @@
                  last))
 
     (is-sub= {:people [{:index 0
-                        :location {:floor 1} 
+                        :location {:floor 1}
                         :target-floor 0
                         :start-time 1}
                        {:index 1
@@ -81,12 +85,13 @@
 
   (testing "Person on same floor as elevator assigned to elevator in next tick"
     (is-sub= {:people [{:index 0
-                        :location {:elevator 0} 
+                        :location {:elevator 0}
                         :target-floor 1
                         :start-time 1}]
               :elevators [{:index 0
                            :floor 0
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? true}]}
              (-> (engine/run {:floor-count 2
                               :elevators [{:capacity 1}]
@@ -102,19 +107,23 @@
               :elevators [{:index 0
                            :floor 1
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? false}
                           {:index 1
                            :floor 0
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? true}]}
              (-> (engine/run {:floor-count 2
                               :elevators [{:capacity 1}
                                           {:capacity 1}]
                               :ticks 1
                               :people-generator (fn [_])
-                              :elevator-logic (fn [_] 
-                                                {0 :up
-                                                 1 :open})})
+                              :elevator-logic (fn [_]
+                                                {0 {:action :up
+                                                    :indicators #{:up :down}}
+                                                 1 {:action :open
+                                                    :indicators #{:up :down}}})})
                  last)))
 
   (testing "Elevators don't move past max or minimum floor"
@@ -122,10 +131,12 @@
               :elevators [{:index 0
                            :floor 0
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? true}
                           {:index 1
                            :floor 0
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? true}]}
              (-> (engine/run {:floor-count 1
                               :elevators [{:capacity 1}
@@ -133,8 +144,10 @@
                               :ticks 1
                               :people-generator (fn [_])
                               :elevator-logic (fn [_]
-                                                {0 :up
-                                                 1 :down})})
+                                                {0 {:action :up
+                                                    :indicators #{:up :down}}
+                                                 1 {:action :down
+                                                    :indicators #{:up :down}}})})
                  last)))
 
   (testing "People get off elevator when it is at target floor"
@@ -146,6 +159,7 @@
               :elevators [{:index 0
                            :floor 1
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? true}]}
              (-> (engine/run {:floor-count 2
                               :elevators [{:capacity 1}]
@@ -154,11 +168,14 @@
                                                   [[{:floor 0
                                                      :target-floor 1}]])
                               :elevator-logic (result-queue
-                                                [{0 :open} 
-                                                 {0 :open}
-                                                 {0 :up}])})
+                                                [{0 {:action :open
+                                                     :indicators #{:up :down}}}
+                                                 {0 {:action :open
+                                                     :indicators #{:up :down}}}
+                                                 {0 {:action :up
+                                                     :indicators #{:up :down}}}])})
                  last)))
-  
+
   (testing "People only enter if there is still room"
     (is-sub= {:people [{:index 0
                         :location {:elevator 0}
@@ -171,6 +188,7 @@
               :elevators [{:index 0
                            :floor 0
                            :capacity 1
+                           :indicators #{:up :down}
                            :open? true}]}
              (-> (engine/run {:floor-count 2
                               :elevators [{:capacity 1}]
@@ -181,5 +199,27 @@
                                                     {:floor 0
                                                      :target-floor 1}]])
                               :elevator-logic (fn [_]
-                                                {0 :open})})
+                                                {0 {:action :open
+                                                    :indicators #{:up :down}}})})
+                 last)))
+
+  (testing "People only enter if the elevator indicator matches their direction"
+    (is-sub= {:people [{:index 0
+                        :location {:floor 0}
+                        :target-floor 1
+                        :start-time 1}]
+              :elevators [{:index 0
+                           :floor 0
+                           :capacity 1
+                           :indicators #{:down}
+                           :open? true}]}
+             (-> (engine/run {:floor-count 2
+                              :elevators [{:capacity 1}]
+                              :ticks 2
+                              :people-generator (result-queue
+                                                  [[{:floor 0
+                                                     :target-floor 1}]])
+                              :elevator-logic (fn [_]
+                                                {0 {:action :open
+                                                    :indicators #{:down}}})})
                  last))))
