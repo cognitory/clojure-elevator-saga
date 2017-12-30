@@ -1,5 +1,11 @@
 (ns elevator.ui.views.world)
 
+(defn icon-view [opts]
+  [:use (merge {:href (str "icons.svg#icon-" (opts :icon))
+                :width "15px"
+                :height "20px"}
+               opts)])
+
 (defn person-view [person]
   (let [icon (cond 
                (= 0 (mod (person :index) 5)) 
@@ -8,9 +14,7 @@
                "male" 
                :else
                "female")]
-    [:use {:href (str "icons.svg#icon-" icon) 
-           :width "15px" 
-           :height "20px"}]))
+    [icon-view {:icon icon}]))
 
 (defn world-view [world-state next-world-state]
   (let [floor-height 50
@@ -81,18 +85,14 @@
            :fill (if (elevator :open?) "black" "gray") 
            :stroke "black" 
            :stroke-width "2px"}]
-         [:use {:href (str "icons.svg#icon-up")
-                :fill (if (contains? (elevator :indicators) :up)
-                        "green"
-                        "#555")
-                :width "15px"
-                :height "20px"}]
-         [:use {:href (str "icons.svg#icon-down")
-                :fill (if (contains? (elevator :indicators) :down)
-                        "green"
-                        "#555")
-                :width "15px"
-                :height "20px"}]])]
+         [icon-view {:icon "up"
+                     :fill (if (contains? (elevator :indicators) :up)
+                             "green"
+                             "#555")}]
+         [icon-view {:icon "down"
+                     :fill (if (contains? (elevator :indicators) :down)
+                             "green"
+                             "#555")}]])]
      
      [:g.people
       (map (fn [person]
