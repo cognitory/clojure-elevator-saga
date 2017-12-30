@@ -80,7 +80,19 @@
            :height floor-height 
            :fill (if (elevator :open?) "black" "gray") 
            :stroke "black" 
-           :stroke-width "2px"}]])]
+           :stroke-width "2px"}]
+         [:use {:href (str "icons.svg#icon-up")
+                :fill (if (contains? (elevator :indicators) :up)
+                        "green"
+                        "#555")
+                :width "15px"
+                :height "20px"}]
+         [:use {:href (str "icons.svg#icon-down")
+                :fill (if (contains? (elevator :indicators) :down)
+                        "green"
+                        "#555")
+                :width "15px"
+                :height "20px"}]])]
      
      [:g.people
       (map (fn [person]
